@@ -9,6 +9,8 @@ import (
 
 type GetArguments struct {
 	Queue          string
+	Timeout        int
+	Wait           bool
 	WithHeader     bool
 	WithProperties bool
 }

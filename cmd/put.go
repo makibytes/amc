@@ -16,9 +16,9 @@ func init() {
 
 var putArgs put.PutArguments
 var putCmd = &cobra.Command{
-	Use:   "put",
+	Use:   "put <address> <message>",
 	Short: "Send a message to an address",
-	Args:  cobra.MinimumNArgs(1),
+	Args:  cobra.MinimumNArgs(1), // message can be read from stdin
 	RunE: func(cmd *cobra.Command, args []string) error {
 		connArgs = getConnArgs(rootCmd)
 

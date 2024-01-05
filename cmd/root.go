@@ -9,8 +9,9 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "amc",
-	Short: "AMQP 1.0 Messaging Client",
+	Use:          "amc",
+	Short:        "AMQP 1.0 Messaging Client",
+	SilenceUsage: true, // for errors other than wrong command line
 }
 var connArgs conn.ConnArguments
 
@@ -31,8 +32,8 @@ func init() {
 	var defaultSaslPassword = os.Getenv("AMC_PASSWORD")
 
 	rootCmd.PersistentFlags().StringP("host", "H", defaultAmqpHost, "URL of the AMQP broker")
-	rootCmd.PersistentFlags().StringP("user", "u", defaultSaslUser, "username for SASL login")
-	rootCmd.PersistentFlags().StringP("password", "p", defaultSaslPassword, "password for SASL login")
+	rootCmd.PersistentFlags().StringP("user", "u", defaultSaslUser, "user for SASL PLAIN login, otherwise ANONYMOUS login)")
+	rootCmd.PersistentFlags().StringP("password", "p", defaultSaslPassword, "password for SASL PLAIN login")
 
 	rootCmd.PersistentFlags().BoolVarP(&log.IsVerbose, "verbose", "v", false, "print verbose output")
 

@@ -17,13 +17,17 @@ func Connect(args ConnArguments) (*amqp.Conn, *amqp.Session, error) {
 	ctx := context.WithoutCancel(context.Background())
 
 	var connOptions *amqp.ConnOptions
-	if args.User != "" {
+	if args.User == "" {
+		connOptions = &amqp.ConnOptions{
+			SASLType: amqp.SASLTypeAnonymous(),
+		}
+	} else {
 		connOptions = &amqp.ConnOptions{
 			SASLType: amqp.SASLTypePlain(args.User, args.Password),
 		}
 	}
 
-	log.Verbose("📡 connecting to %s as %s...\n", args.Host, args.User)
+	log.Verbose("📡 connecting to %s...\n", args.Host)
 	connection, err := amqp.Dial(ctx, args.Host, connOptions)
 	if err != nil {
 		return nil, nil, err
