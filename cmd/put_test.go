@@ -16,8 +16,8 @@ func TestPut(t *testing.T) {
 		if action := putCmd.CalledAs(); action != "put" {
 			t.Errorf("Action 'put' has not been called")
 		}
-		if connArgs.Host != "amqp://custom_uri:1234" {
-			t.Errorf("AMQP URI not set correctly: %s", connArgs.Host)
+		if connArgs.Server != "amqp://custom_uri:1234" {
+			t.Errorf("AMQP URI not set correctly: %s", connArgs.Server)
 		}
 		if putArgs.Address != "queue1" {
 			t.Errorf("Address name not set correctly: %s", putArgs.Address)

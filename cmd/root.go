@@ -20,18 +20,21 @@ func Execute() error {
 	return rootCmd.Execute()
 }
 
+/*
+ * convention:
+ * - use lowercase single character flags for connection settings
+ * - common connection flags should also be accessible by environment variables
+ */
 func init() {
-	// cobra.OnInitialize(initConfig)
-
-	var defaultAmqpHost = os.Getenv("AMC_HOST")
-	if defaultAmqpHost == "" {
-		defaultAmqpHost = "amqp://localhost:5672"
+	var defaultAmqpServer = os.Getenv("AMC_SERVER")
+	if defaultAmqpServer == "" {
+		defaultAmqpServer = "amqp://localhost:5672"
 	}
 
 	var defaultSaslUser = os.Getenv("AMC_USER")
 	var defaultSaslPassword = os.Getenv("AMC_PASSWORD")
 
-	rootCmd.PersistentFlags().StringP("host", "H", defaultAmqpHost, "URL of the AMQP broker")
+	rootCmd.PersistentFlags().StringP("server", "s", defaultAmqpServer, "server URL")
 	rootCmd.PersistentFlags().StringP("user", "u", defaultSaslUser, "user for SASL PLAIN login, otherwise ANONYMOUS login)")
 	rootCmd.PersistentFlags().StringP("password", "p", defaultSaslPassword, "password for SASL PLAIN login")
 
@@ -42,12 +45,12 @@ func init() {
 }
 
 func getConnArgs(cmd *cobra.Command) conn.ConnArguments {
-	host, _ := rootCmd.Flags().GetString("host")
+	server, _ := rootCmd.Flags().GetString("server")
 	user, _ := rootCmd.Flags().GetString("user")
 	password, _ := rootCmd.Flags().GetString("password")
 
 	connArgs = conn.ConnArguments{
-		Host:     host,
+		Server:   server,
 		User:     user,
 		Password: password,
 	}

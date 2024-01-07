@@ -13,15 +13,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
+/*
+ * convention:
+ * - use uppercase flags for message creation
+ * - not all flags need to have a single char flag
+ * - common flags should have a single char flag of course
+ * (let's see how long we can keep this up)
+ */
 func init() {
-	putCmd.Flags().StringP("contenttype", "C", "text/plain", "MIME type of message data")
-	putCmd.Flags().StringP("correlationid", "c", "", "correlation id for request/response")
-	putCmd.Flags().BoolP("durable", "d", false, "message is durable (stored to disk)")
-	putCmd.Flags().StringP("messageid", "i", "", "message id")
-	putCmd.Flags().BoolP("multicast", "m", false, "send to a multicast address")
-	putCmd.Flags().Uint8("priority", 4, "priority of the message (0-9)")
+	putCmd.Flags().StringP("contenttype", "T", "text/plain", "MIME type of message data")
+	putCmd.Flags().StringP("correlationid", "C", "", "correlation id for request/response")
+	putCmd.Flags().BoolP("durable", "D", false, "message is durable (stored to disk)")
+	putCmd.Flags().StringP("messageid", "I", "", "message id")
+	putCmd.Flags().BoolP("multicast", "M", false, "send to a multicast address, default is anycast")
+	putCmd.Flags().Uint8P("priority", "Y", 4, "priority of the message (0-9)")
 	putCmd.Flags().StringSliceP("property", "P", []string{}, "message properties in key=value format (can be used multiple times)")
-	putCmd.Flags().StringP("replyto", "r", "", "reply to address for request/response")
+	putCmd.Flags().StringP("replyto", "R", "", "reply to address for request/response")
 	putCmd.Flags().String("subject", "", "subject")
 	putCmd.Flags().String("to", "", "intended destionation node")
 }

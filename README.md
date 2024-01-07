@@ -39,9 +39,9 @@ amc get <queue-name>
 The following parameters and environment variables can be used:
 
 ```sh
-  -H, --host string       URL of the AMQP broker    [$AMC_HOST]
-  -p, --password string   password for SASL login   [$AMC_USER]
-  -u, --user string       username for SASL login   [$AMC_PASSWORD]
+  -s, --server string     server URL of the AMQP broker  [$AMC_SERVER]
+  -p, --password string   password for SASL login        [$AMC_USER]
+  -u, --user string       username for SASL login        [$AMC_PASSWORD]
 ```
 
 ## Running the tests

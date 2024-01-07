@@ -8,7 +8,7 @@ import (
 )
 
 type ConnArguments struct {
-	Host     string
+	Server   string
 	User     string
 	Password string
 }
@@ -27,8 +27,8 @@ func Connect(args ConnArguments) (*amqp.Conn, *amqp.Session, error) {
 		}
 	}
 
-	log.Verbose("📡 connecting to %s...\n", args.Host)
-	connection, err := amqp.Dial(ctx, args.Host, connOptions)
+	log.Verbose("📡 connecting to %s...\n", args.Server)
+	connection, err := amqp.Dial(ctx, args.Server, connOptions)
 	if err != nil {
 		return nil, nil, err
 	}
