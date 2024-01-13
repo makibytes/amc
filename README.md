@@ -36,7 +36,10 @@ You can receive a message with the following command:
 amc get <queue-name>
 ```
 
-The following parameters and environment variables can be used:
+This will print the payload (data) to stdout and remove the message from the
+queue. Use `peek` instead of `get` to keep it in the queue.
+
+The following parameters and environment variables can be used for all commands:
 
 ```sh
   -s, --server string     server URL of the AMQP broker  [$AMC_SERVER]

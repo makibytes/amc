@@ -22,8 +22,8 @@ type PutArguments struct {
 	To            string
 }
 
-// SendMessage sends a message to the specified queue.
 func SendMessage(ctx context.Context, session *amqp.Session, args PutArguments) error {
+	log.Verbose("🏗️ constructing message...")
 	message := amqp.NewMessage(args.Message)
 	message.Header = &amqp.MessageHeader{
 		Durable:  args.Durable,

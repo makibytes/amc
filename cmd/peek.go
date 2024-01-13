@@ -3,20 +3,18 @@ package cmd
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
-	"github.com/Azure/go-amqp"
 	"github.com/makibytes/amc/conn"
 	"github.com/makibytes/amc/get"
 	"github.com/makibytes/amc/rc"
 	"github.com/spf13/cobra"
 )
 
-var getArgs get.GetArguments
-var getCmd = &cobra.Command{
-	Use:   "get <queue>",
-	Short: "Fetch a message from a queue",
+var peekArgs get.GetArguments
+var peekCmd = &cobra.Command{
+	Use:   "peek <queue>",
+	Short: "Look into a message, but let it stay in the queue",
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		connArgs = getConnArgs(rootCmd)
@@ -24,8 +22,8 @@ var getCmd = &cobra.Command{
 		wait, _ := cmd.Flags().GetBool("wait")
 		timeout, _ := cmd.Flags().GetInt("timeout")
 
-		getArgs = get.GetArguments{
-			Acknowledge: true,
+		peekArgs = get.GetArguments{
+			Acknowledge: false,
 			Queue:       args[0],
 			Timeout:     timeout,
 			Wait:        wait,
@@ -51,7 +49,7 @@ var getCmd = &cobra.Command{
 		}
 		defer cancel()
 
-		message, err := get.ReceiveMessage(ctx, session, getArgs)
+		message, err := get.ReceiveMessage(ctx, session, peekArgs)
 		if err != nil {
 			return err
 		}
@@ -59,7 +57,8 @@ var getCmd = &cobra.Command{
 			return errors.New(rc.NoMessage)
 		}
 
-		err = handleMessage(message, getArgs)
+		// use cmd.get's handleMessage()
+		err = handleMessage(message, peekArgs)
 
 		session.Close(context.Background())
 		connection.Close()
@@ -69,26 +68,7 @@ var getCmd = &cobra.Command{
 }
 
 func init() {
-	getCmd.Flags().Int32P("number", "n", 1, "number of messages to fetch, 0 = all")
-	getCmd.Flags().BoolP("wait", "w", false, "wait (endless) for a message to arrive")
-	getCmd.Flags().Int32P("timeout", "t", 30, "seconds to wait")
-}
-
-func handleMessage(message *amqp.Message, args get.GetArguments) error {
-	if args.WithHeader {
-		headerString := fmt.Sprintf("%v", message.Header)
-		fmt.Printf("Header:\n%s\n", headerString)
-	}
-	if args.WithProperties {
-		propertiesString := fmt.Sprintf("%v", message.Properties)
-		fmt.Printf("Header:\n%s\n", propertiesString)
-	}
-	if args.WithHeader || args.WithProperties {
-		fmt.Println("Data:")
-	}
-
-	// always print message data
-	fmt.Println(string(message.GetData()))
-
-	return nil
+	peekCmd.Flags().Int32P("number", "n", 1, "number of messages to fetch, 0 = all")
+	peekCmd.Flags().BoolP("wait", "w", false, "wait (endless) for a message to arrive")
+	peekCmd.Flags().Int32P("timeout", "t", 30, "seconds to wait")
 }

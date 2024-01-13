@@ -40,6 +40,7 @@ func init() {
 
 	rootCmd.PersistentFlags().BoolVarP(&log.IsVerbose, "verbose", "v", false, "print verbose output")
 
+	rootCmd.AddCommand(peekCmd)
 	rootCmd.AddCommand(getCmd)
 	rootCmd.AddCommand(putCmd)
 }
