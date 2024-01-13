@@ -54,7 +54,7 @@ go test ./...
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Contributions are welcome. Please open an issue or submit a pull request.
 
 ## License
 

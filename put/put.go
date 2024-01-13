@@ -25,16 +25,18 @@ type PutArguments struct {
 // SendMessage sends a message to the specified queue.
 func SendMessage(ctx context.Context, session *amqp.Session, args PutArguments) error {
 	message := amqp.NewMessage(args.Message)
-
-	message.Header.Durable = args.Durable
-	message.Header.Priority = args.Priority
-
-	message.Properties.ContentType = &args.ContentType
-	message.Properties.CorrelationID = &args.CorrelationID
-	message.Properties.MessageID = &args.MessageID
-	message.Properties.ReplyTo = &args.ReplyTo
-	message.Properties.Subject = &args.Subject
-	message.Properties.To = &args.To
+	message.Header = &amqp.MessageHeader{
+		Durable:  args.Durable,
+		Priority: args.Priority,
+	}
+	message.Properties = &amqp.MessageProperties{
+		ContentType:   &args.ContentType,
+		CorrelationID: &args.CorrelationID,
+		MessageID:     &args.MessageID,
+		ReplyTo:       &args.ReplyTo,
+		Subject:       &args.Subject,
+		To:            &args.To,
+	}
 
 	if len(args.Properties) > 0 {
 		message.ApplicationProperties = args.Properties
