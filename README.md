@@ -47,12 +47,26 @@ The following parameters and environment variables can be used for all commands:
   -u, --user string       username for SASL login        [$AMC_PASSWORD]
 ```
 
-## Running the tests
+## Testing
 
-To run the tests, use the `go test` command:
+The tests are based on the [https://https://github.com/bats-core/bats-core](bats testing framework)
+(included) and depend on a local Artemis broker with its default settings.
+
+If you have Docker you can spin up an Artemis container like so:
 
 ```sh
-go test ./...
+docker run --name artemis -d \
+    -p 8161:8161 -p 5672:5672 \
+    apache/activemq-artemis:2.31.2-alpine
+```
+
+Port 5672 is the port of the AMQP 1.0 protocol. Port 8161 provides access to the Artemis web console,
+where you can check the queues and messages manually. Default credentials are artemis/artemis.
+
+Then you can start the tests:
+
+```sh
+./run-tests.sh
 ```
 
 ## Contributing
