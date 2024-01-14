@@ -3,11 +3,10 @@ package cmd
 import (
 	"context"
 	"errors"
-	"time"
 
 	"github.com/makibytes/amc/conn"
-	"github.com/makibytes/amc/get"
 	"github.com/makibytes/amc/rc"
+	"github.com/makibytes/amc/receive"
 	"github.com/spf13/cobra"
 )
 
@@ -19,11 +18,18 @@ var peekCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		connArgs = getConnArgs(rootCmd)
 
+		number, _ := cmd.Flags().GetInt("number")
+		timeout, _ := cmd.Flags().GetFloat32("timeout")
 		wait, _ := cmd.Flags().GetBool("wait")
-		timeout, _ := cmd.Flags().GetInt("timeout")
+		if wait {
+			timeout = 0
+		}
 
+		durable, _ := cmd.Flags().GetBool("durable")
 		peekArgs = conn.ReceiveArguments{
 			Acknowledge: false,
+			Durable:     durable,
+			Number:      number,
 			Queue:       args[0],
 			Timeout:     timeout,
 			Wait:        wait,
@@ -34,24 +40,14 @@ var peekCmd = &cobra.Command{
 			return err
 		}
 
-		timeout, _ = cmd.Flags().GetInt("timeout")
-		wait, _ = cmd.Flags().GetBool("wait")
-		if wait {
-			timeout = 0 // wait flag overrides timeout
-		}
-
-		var ctx context.Context
-		var cancel context.CancelFunc
-		if timeout == 0 {
-			ctx, cancel = context.WithCancel(context.Background())
-		} else {
-			ctx, cancel = context.WithTimeout(context.Background(), time.Duration(timeout)*time.Second)
-		}
-		defer cancel()
-
-		message, err := get.ReceiveMessage(ctx, session, peekArgs)
+		message, err := receive.ReceiveMessage(session, peekArgs)
 		if err != nil {
-			return err
+			if errors.Is(err, context.DeadlineExceeded) {
+				// no message when timeout occurs? -> no error
+				return nil
+			} else {
+				return err
+			}
 		}
 		if message == nil {
 			return errors.New(rc.NoMessage)
@@ -68,7 +64,8 @@ var peekCmd = &cobra.Command{
 }
 
 func init() {
-	peekCmd.Flags().Int32P("number", "n", 1, "number of messages to fetch, 0 = all")
+	peekCmd.Flags().BoolP("durable", "d", true, "create durable queue if it doesn't exist")
+	peekCmd.Flags().IntP("number", "n", 1, "number of messages to fetch, 0 = all")
 	peekCmd.Flags().BoolP("wait", "w", false, "wait (endless) for a message to arrive")
-	peekCmd.Flags().Int32P("timeout", "t", 30, "seconds to wait")
+	peekCmd.Flags().Float32P("timeout", "t", 0.1, "seconds to wait")
 }

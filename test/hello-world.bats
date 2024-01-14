@@ -3,7 +3,7 @@ load 'test_helper/bats-assert/load'
 
 export amc="go run main.go -u artemis -p artemis"
 
-@test "send and receive hello world" {
+@test "send and receive Hello World" {
     run $amc put queue1 Hello World
     assert_success
 

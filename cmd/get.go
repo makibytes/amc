@@ -4,12 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/Azure/go-amqp"
 	"github.com/makibytes/amc/conn"
-	"github.com/makibytes/amc/get"
 	"github.com/makibytes/amc/rc"
+	"github.com/makibytes/amc/receive"
 	"github.com/spf13/cobra"
 )
 
@@ -21,11 +20,18 @@ var getCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		connArgs = getConnArgs(rootCmd)
 
+		number, _ := cmd.Flags().GetInt("number")
+		timeout, _ := cmd.Flags().GetFloat32("timeout")
 		wait, _ := cmd.Flags().GetBool("wait")
-		timeout, _ := cmd.Flags().GetInt("timeout")
+		if wait {
+			timeout = 0
+		}
 
-		getArgs = conn.ReceiveArguments{
+		durable, _ := cmd.Flags().GetBool("durable")
+		getArgs := conn.ReceiveArguments{
 			Acknowledge: true,
+			Durable:     durable,
+			Number:      number,
 			Queue:       args[0],
 			Timeout:     timeout,
 			Wait:        wait,
@@ -36,24 +42,14 @@ var getCmd = &cobra.Command{
 			return err
 		}
 
-		timeout, _ = cmd.Flags().GetInt("timeout")
-		wait, _ = cmd.Flags().GetBool("wait")
-		if wait {
-			timeout = 0 // wait flag overrides timeout
-		}
-
-		var ctx context.Context
-		var cancel context.CancelFunc
-		if timeout == 0 {
-			ctx, cancel = context.WithCancel(context.Background())
-		} else {
-			ctx, cancel = context.WithTimeout(context.Background(), time.Duration(timeout)*time.Second)
-		}
-		defer cancel()
-
-		message, err := get.ReceiveMessage(ctx, session, getArgs)
+		message, err := receive.ReceiveMessage(session, getArgs)
 		if err != nil {
-			return err
+			if errors.Is(err, context.DeadlineExceeded) {
+				// no message when timeout occurs? -> no error
+				return nil
+			} else {
+				return err
+			}
 		}
 		if message == nil {
 			return errors.New(rc.NoMessage)
@@ -69,9 +65,10 @@ var getCmd = &cobra.Command{
 }
 
 func init() {
-	getCmd.Flags().Int32P("number", "n", 1, "number of messages to fetch, 0 = all")
+	getCmd.Flags().BoolP("durable", "d", true, "create durable queue if it doesn't exist")
+	getCmd.Flags().IntP("number", "n", 1, "number of messages to fetch, 0 = all")
 	getCmd.Flags().BoolP("wait", "w", false, "wait (endless) for a message to arrive")
-	getCmd.Flags().Int32P("timeout", "t", 30, "seconds to wait")
+	getCmd.Flags().Float32P("timeout", "t", 0.1, "seconds to wait")
 }
 
 func handleMessage(message *amqp.Message, args conn.ReceiveArguments) error {

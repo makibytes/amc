@@ -1,4 +1,4 @@
-package put
+package send
 
 import (
 	"context"
@@ -28,11 +28,23 @@ func SendMessage(ctx context.Context, session *amqp.Session, args conn.SendArgum
 		message.ApplicationProperties = args.Properties
 	}
 
-	// if args.Multicast {
-	// }
+	var durability amqp.Durability
+	if args.Durable {
+		durability = amqp.DurabilityUnsettledState
+	} else {
+		durability = amqp.DurabilityNone
+	}
+
+	senderOptions := &amqp.SenderOptions{
+		Durability: durability,
+		//		DynamicAddress:   true,
+		SourceAddress:    args.Address,
+		TargetDurability: durability,
+		Name:             "amc",
+	}
 
 	log.Verbose("📤 generating sender...")
-	sender, err := session.NewSender(ctx, args.Address, nil)
+	sender, err := session.NewSender(ctx, args.Address, senderOptions)
 	if err != nil {
 		return err
 	}

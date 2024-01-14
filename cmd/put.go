@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/makibytes/amc/conn"
-	"github.com/makibytes/amc/put"
+	"github.com/makibytes/amc/send"
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +23,7 @@ import (
 func init() {
 	putCmd.Flags().StringP("contenttype", "T", "text/plain", "MIME type of message data")
 	putCmd.Flags().StringP("correlationid", "C", "", "correlation id for request/response")
-	putCmd.Flags().BoolP("durable", "D", false, "message is durable (stored to disk)")
+	putCmd.Flags().BoolP("durable", "d", true, "create durable address if it doesn't exist")
 	putCmd.Flags().StringP("messageid", "I", "", "message id")
 	putCmd.Flags().BoolP("multicast", "M", false, "send to a multicast address, default is anycast")
 	putCmd.Flags().Uint8P("priority", "Y", 4, "priority of the message (0-9)")
@@ -93,7 +93,7 @@ var putCmd = &cobra.Command{
 			return err
 		}
 
-		err = put.SendMessage(context.Background(), session, putArgs)
+		err = send.SendMessage(context.Background(), session, putArgs)
 
 		session.Close(context.Background())
 		connection.Close()
