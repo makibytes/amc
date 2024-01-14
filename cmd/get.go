@@ -13,7 +13,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var getArgs get.GetArguments
+var getArgs conn.ReceiveArguments
 var getCmd = &cobra.Command{
 	Use:   "get <queue>",
 	Short: "Fetch a message from a queue",
@@ -24,7 +24,7 @@ var getCmd = &cobra.Command{
 		wait, _ := cmd.Flags().GetBool("wait")
 		timeout, _ := cmd.Flags().GetInt("timeout")
 
-		getArgs = get.GetArguments{
+		getArgs = conn.ReceiveArguments{
 			Acknowledge: true,
 			Queue:       args[0],
 			Timeout:     timeout,
@@ -74,7 +74,7 @@ func init() {
 	getCmd.Flags().Int32P("timeout", "t", 30, "seconds to wait")
 }
 
-func handleMessage(message *amqp.Message, args get.GetArguments) error {
+func handleMessage(message *amqp.Message, args conn.ReceiveArguments) error {
 	if args.WithHeader {
 		headerString := fmt.Sprintf("%v", message.Header)
 		fmt.Printf("Header:\n%s\n", headerString)

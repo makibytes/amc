@@ -4,25 +4,11 @@ import (
 	"context"
 
 	"github.com/Azure/go-amqp"
+	"github.com/makibytes/amc/conn"
 	"github.com/makibytes/amc/log"
 )
 
-type PutArguments struct {
-	Address       string
-	ContentType   string
-	CorrelationID string
-	Durable       bool
-	Message       []byte
-	MessageID     string
-	Multicast     bool
-	Priority      uint8
-	Properties    map[string]any
-	ReplyTo       string
-	Subject       string
-	To            string
-}
-
-func SendMessage(ctx context.Context, session *amqp.Session, args PutArguments) error {
+func SendMessage(ctx context.Context, session *amqp.Session, args conn.SendArguments) error {
 	log.Verbose("🏗️ constructing message...")
 	message := amqp.NewMessage(args.Message)
 	message.Header = &amqp.MessageHeader{

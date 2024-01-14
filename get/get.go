@@ -4,19 +4,11 @@ import (
 	"context"
 
 	"github.com/Azure/go-amqp"
+	"github.com/makibytes/amc/conn"
 	"github.com/makibytes/amc/log"
 )
 
-type GetArguments struct {
-	Acknowledge    bool
-	Queue          string
-	Timeout        int
-	Wait           bool
-	WithHeader     bool
-	WithProperties bool
-}
-
-func ReceiveMessage(ctx context.Context, session *amqp.Session, args GetArguments) (*amqp.Message, error) {
+func ReceiveMessage(ctx context.Context, session *amqp.Session, args conn.ReceiveArguments) (*amqp.Message, error) {
 	log.Verbose("📥 generating receiver...")
 	receiver, err := session.NewReceiver(ctx, args.Queue, nil)
 	if err != nil {

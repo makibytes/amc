@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var peekArgs get.GetArguments
+var peekArgs conn.ReceiveArguments
 var peekCmd = &cobra.Command{
 	Use:   "peek <queue>",
 	Short: "Look into a message, but let it stay in the queue",
@@ -22,7 +22,7 @@ var peekCmd = &cobra.Command{
 		wait, _ := cmd.Flags().GetBool("wait")
 		timeout, _ := cmd.Flags().GetInt("timeout")
 
-		peekArgs = get.GetArguments{
+		peekArgs = conn.ReceiveArguments{
 			Acknowledge: false,
 			Queue:       args[0],
 			Timeout:     timeout,

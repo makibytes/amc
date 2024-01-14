@@ -33,7 +33,7 @@ func init() {
 	putCmd.Flags().String("to", "", "intended destionation node")
 }
 
-var putArgs put.PutArguments
+var putArgs conn.SendArguments
 var putCmd = &cobra.Command{
 	Use:   "put <address> <message>",
 	Short: "Send a message to an address",
@@ -73,7 +73,7 @@ var putCmd = &cobra.Command{
 			}
 		}
 
-		putArgs = put.PutArguments{
+		putArgs = conn.SendArguments{
 			Address:       args[0],
 			ContentType:   contenttype,
 			CorrelationID: correlationid,
