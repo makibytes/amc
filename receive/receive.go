@@ -30,12 +30,22 @@ func ReceiveMessage(session *amqp.Session, args conn.ReceiveArguments) (*amqp.Me
 		durability = amqp.DurabilityNone
 	}
 
+	var sourceCapabilities []string
+	if args.Multicast {
+		sourceCapabilities = append(sourceCapabilities, "topic")
+		log.Verbose("🤟 with MULTICAST routing")
+	} else {
+		sourceCapabilities = append(sourceCapabilities, "queue")
+		log.Verbose("👉 with ANYCAST routing")
+	}
+
 	receiverOptions := &amqp.ReceiverOptions{
-		Durability: durability,
-		//		DynamicAddress:   true,
-		Name:             "amc",
-		SourceDurability: durability,
-		TargetAddress:    args.Queue,
+		SourceCapabilities: sourceCapabilities,
+		SourceExpiryPolicy: amqp.ExpiryPolicyLinkDetach,
+		Durability:         durability,
+		Name:               "amc",
+		SourceDurability:   durability,
+		SettlementMode:     amqp.ReceiverSettleModeFirst.Ptr(),
 	}
 
 	log.Verbose("📥 generating receiver...")

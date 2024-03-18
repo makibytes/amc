@@ -4,12 +4,13 @@ import (
 	"context"
 
 	"github.com/Azure/go-amqp"
+	"github.com/makibytes/amc/artemis"
 	"github.com/makibytes/amc/conn"
 	"github.com/makibytes/amc/log"
 )
 
 func SendMessage(ctx context.Context, session *amqp.Session, args conn.SendArguments) error {
-	log.Verbose("🏗️ constructing message...")
+	log.Verbose("🏗️  constructing message...")
 	message := amqp.NewMessage(args.Message)
 	message.Header = &amqp.MessageHeader{
 		Durable:  args.Durable,
@@ -23,6 +24,21 @@ func SendMessage(ctx context.Context, session *amqp.Session, args conn.SendArgum
 		Subject:       &args.Subject,
 		To:            &args.To,
 	}
+
+	// AMQP 1.0 doesn't know about ANYCAST/MULTICAST, it's an Artemis-specific feature
+	var artemisRouting uint8
+	if args.Multicast {
+		log.Verbose("🤟 with MULTICAST routing")
+		artemisRouting = artemis.TopicType
+	} else {
+		log.Verbose("👉 with ANYCAST routing")
+		artemisRouting = artemis.QueueType
+	}
+	message.DeliveryAnnotations = amqp.Annotations{
+		"x-opt-jms-dest": artemisRouting,
+	}
+
+	//TODO: reply queue -> x-opt-jms-reply-to
 
 	if len(args.Properties) > 0 {
 		message.ApplicationProperties = args.Properties

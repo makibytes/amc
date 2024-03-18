@@ -17,7 +17,7 @@ func TestGet(t *testing.T) {
 			t.Errorf("Action 'put' has not been called")
 		}
 		if connArgs.Server != "amqp://localhost:5672" {
-			t.Errorf("AMQP URI not set to default")
+			t.Errorf("URI not set to default")
 		}
 		if getArgs.Queue != "queue1" {
 			t.Errorf("Queue name not set correctly: %s", getArgs.Queue)

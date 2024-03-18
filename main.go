@@ -11,7 +11,7 @@ func main() {
 	rc := cmd.Execute()
 	switch rc {
 	case nil:
-		log.Verbose("✅ Done")
+		log.Verbose("✅ done")
 		os.Exit(0)
 	default:
 		os.Exit(1)

@@ -23,9 +23,9 @@ import (
 func init() {
 	putCmd.Flags().StringP("contenttype", "T", "text/plain", "MIME type of message data")
 	putCmd.Flags().StringP("correlationid", "C", "", "correlation id for request/response")
-	putCmd.Flags().BoolP("durable", "d", true, "create durable address if it doesn't exist")
+	putCmd.Flags().BoolP("durable", "d", false, "create durable address if it doesn't exist")
 	putCmd.Flags().StringP("messageid", "I", "", "message id")
-	putCmd.Flags().BoolP("multicast", "M", false, "send to a multicast address, default is anycast")
+	putCmd.Flags().BoolP("multicast", "m", false, "send to a multicast address, default is anycast")
 	putCmd.Flags().Uint8P("priority", "Y", 4, "priority of the message (0-9)")
 	putCmd.Flags().StringSliceP("property", "P", []string{}, "message properties in key=value format (can be used multiple times)")
 	putCmd.Flags().StringP("replyto", "R", "", "reply to address for request/response")

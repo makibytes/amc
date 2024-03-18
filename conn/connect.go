@@ -19,11 +19,13 @@ func Connect(args ConnArguments) (*amqp.Conn, *amqp.Session, error) {
 	var connOptions *amqp.ConnOptions
 	if args.User == "" {
 		connOptions = &amqp.ConnOptions{
-			SASLType: amqp.SASLTypeAnonymous(),
+			ContainerID: "amcContainer",
+			SASLType:    amqp.SASLTypeAnonymous(),
 		}
 	} else {
 		connOptions = &amqp.ConnOptions{
-			SASLType: amqp.SASLTypePlain(args.User, args.Password),
+			ContainerID: "amcContainer",
+			SASLType:    amqp.SASLTypePlain(args.User, args.Password),
 		}
 	}
 

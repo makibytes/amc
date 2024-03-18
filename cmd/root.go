@@ -10,7 +10,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:          "amc",
-	Short:        "AMQP 1.0 Messaging Client",
+	Short:        "Artemis Messaging Client",
 	SilenceUsage: true, // for errors other than wrong command line
 }
 var connArgs conn.ConnArguments

@@ -27,10 +27,12 @@ var getCmd = &cobra.Command{
 			timeout = 0
 		}
 
+		multicast, _ := cmd.Flags().GetBool("multicast")
 		durable, _ := cmd.Flags().GetBool("durable")
 		getArgs := conn.ReceiveArguments{
 			Acknowledge: true,
 			Durable:     durable,
+			Multicast:   multicast,
 			Number:      number,
 			Queue:       args[0],
 			Timeout:     timeout,
@@ -65,7 +67,8 @@ var getCmd = &cobra.Command{
 }
 
 func init() {
-	getCmd.Flags().BoolP("durable", "d", true, "create durable queue if it doesn't exist")
+	getCmd.Flags().BoolP("durable", "d", false, "create durable queue if it doesn't exist")
+	getCmd.Flags().BoolP("multicast", "m", false, "multicast: subscribe to address, default is anycast: get from queue")
 	getCmd.Flags().IntP("number", "n", 1, "number of messages to fetch, 0 = all")
 	getCmd.Flags().BoolP("wait", "w", false, "wait (endless) for a message to arrive")
 	getCmd.Flags().Float32P("timeout", "t", 0.1, "seconds to wait")
