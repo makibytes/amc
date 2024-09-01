@@ -1,0 +1,23 @@
+# from go-ethereum:
+name: mac build and tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.23.0
+      - name: Run tests
+        run: go test -short ./...
+        env:
+          GOOS: darwin
+          GOARCH: amd64
