@@ -16,8 +16,9 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-- Go 1.18 or later (see [https://github.com/Azure/go-amqp](Azure/go-amqp))
-- An AMQP 1.0 compatible Message Broker, e.g. Azure Message Service or Apache ActiveMQ Artemis
+- Go 1.23 or later (see [https://github.com/Azure/go-amqp](Azure/go-amqp))
+- An AMQP 1.0 compatible Message Broker, e.g. Azure Message Service or Apache
+  ActiveMQ Artemis
 
 ## Usage
 
@@ -25,12 +26,6 @@ You can send a message with the following command:
 
 ```sh
 amc put <queue-name> <message>
-```
-
-The message can also be provided via stdin:
-
-```sh
-amc put <queue-name> < message.dat
 ```
 
 You can receive a message with the following command:
@@ -42,13 +37,58 @@ amc get <queue-name>
 This will print the payload (data) to stdout and remove the message from the
 queue. Use `peek` instead of `get` to keep it in the queue.
 
+You can wait for a message with the `-w` flag:
+
+```sh
+amc get -w <queue-name>
+```
+
 The following parameters and environment variables can be used for all commands:
 
 ```sh
   -s, --server string      server URL of the broker    [$AMC_SERVER]
-  -p, --password string    password for SASL login     [$AMC_USER]
-  -u, --user string        username for SASL login     [$AMC_PASSWORD]
+  -u, --user string        username for SASL login     [$AMC_USER]
+  -p, --password string    password for SASL login     [$AMC_PASSWORD]
 ```
+
+## Advanced Usage
+
+You can set properties (metadata) for the message with the following flags:
+
+```sh
+amc put <queue-name> -P <key>=<value> <message>
+```
+
+If a message has properties, the `get` command will show them automatically.
+You can suppress this behaviour with the `-q` flag:
+
+```sh
+  -q, --quiet    quiet about properties, show data only
+```
+
+Note that in the context of the AMQP 1.0 protocol, the properties are called
+"Application Properties". The protocol also defines a structure called
+"Properties" with a finite list of fields like message-id, user-id, etc. In
+`amc` we call them "MessageProperties" to avoid confusion. You can see them
+in verbose mode only.
+
+## Working with Files, Redirection of STDOUT
+
+The message can be read from file:
+
+```sh
+amc put <queue-name> < message.dat
+```
+
+By redirecting the output of `get` the message data (and only the data) will
+be written to a file:
+
+```sh
+amc get <queue-name> > message.dat
+```
+
+The file will be exactly the same as it was sent! Without redirection `amc`
+adds a newline character at the end of the message data for better readability.
 
 ## Testing
 
@@ -60,7 +100,7 @@ If you have Docker you can spin up an Artemis container like so:
 ```sh
 docker run --name artemis -d \
     -p 8161:8161 -p 5672:5672 \
-    apache/activemq-artemis:2.31.2-alpine
+    apache/activemq-artemis:latest-alpine
 ```
 
 Port 5672 is the default port of the AMQP 1.0 protocol. Port 8161 provides access to the Artemis web console,
