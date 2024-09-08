@@ -11,11 +11,6 @@ jobs:
   windows-amd64:
     name: build and test windows/amd64
     runs-on: windows-latest
-    services:
-      artemis:
-        image: apache/activemq-artemis:latest-alpine
-        ports:
-          - 5672:5672
     steps:
     - name: Set up Go
       uses: actions/setup-go@v5
