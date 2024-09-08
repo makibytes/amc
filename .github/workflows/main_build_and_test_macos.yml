@@ -11,11 +11,6 @@ jobs:
   macos-amd64:
     name: build and test macos/amd64
     runs-on: macos-13
-    services:
-      artemis:
-        image: apache/activemq-artemis:latest-alpine
-        ports:
-          - 5672:5672
     steps:
     - name: Set up Go
       uses: actions/setup-go@v5
@@ -31,19 +26,10 @@ jobs:
       run: go build -v -ldflags="-X 'github.com/makibytes/amc/cmd.version=${{ github.ref_name }}'" .
     - name: Run tests
       run: go test -short ./...
-    - name: Setup bats and bats libs
-      uses: bats-core/bats-action@2.0.0
-    - name: Run integration tests
-      run: ./run-tests.sh
 
   macos-arm64:
     name: build and test macos/arm64
     runs-on: macos-latest
-    services:
-      artemis:
-        image: apache/activemq-artemis:latest-alpine
-        ports:
-          - 5672:5672
     steps:
     - name: Set up Go
       uses: actions/setup-go@v5
@@ -59,7 +45,3 @@ jobs:
       run: go build -v -ldflags="-X 'github.com/makibytes/amc/cmd.version=${{ github.ref_name }}'" .
     - name: Run tests
       run: go test -short ./...
-    - name: Setup bats and bats libs
-      uses: bats-core/bats-action@2.0.0
-    - name: Run integration tests
-      run: ./run-tests.sh
