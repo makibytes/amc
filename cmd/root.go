@@ -8,10 +8,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// need a field in order to override it at link time (github action)
+var version = "dev"
+
 var rootCmd = &cobra.Command{
 	Use:          "amc",
 	Short:        "Artemis Messaging Client",
 	SilenceUsage: true, // for errors other than wrong command line
+	Version:      version,
 }
 var connArgs conn.ConnArguments
 
@@ -39,13 +43,14 @@ func init() {
 	rootCmd.PersistentFlags().StringP("password", "p", defaultSaslPassword, "password for SASL PLAIN login")
 
 	rootCmd.PersistentFlags().BoolVarP(&log.IsVerbose, "verbose", "v", false, "print verbose output")
+	rootCmd.SetVersionTemplate(`{{printf "%s\n" .Version}}`)
 
 	rootCmd.AddCommand(peekCmd)
 	rootCmd.AddCommand(getCmd)
 	rootCmd.AddCommand(putCmd)
 }
 
-func getConnArgs(cmd *cobra.Command) conn.ConnArguments {
+func getConnArgs() conn.ConnArguments {
 	server, _ := rootCmd.Flags().GetString("server")
 	user, _ := rootCmd.Flags().GetString("user")
 	password, _ := rootCmd.Flags().GetString("password")

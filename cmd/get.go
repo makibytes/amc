@@ -20,7 +20,7 @@ var getCmd = &cobra.Command{
 	Short: "Fetch a message from a queue",
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		connArgs = getConnArgs(rootCmd)
+		connArgs = getConnArgs()
 
 		number, _ := cmd.Flags().GetInt("number")
 		timeout, _ := cmd.Flags().GetFloat32("timeout")
