@@ -14,6 +14,7 @@ func main() {
 		log.Verbose("✅ done")
 		os.Exit(0)
 	default:
+		log.Error("%s", rc)
 		os.Exit(1)
 	}
 }

@@ -23,3 +23,10 @@ go.work
 
 # IDE, editor
 .vscode/
+
+# bats git
+./test/test_helper/bats-assert/.git
+./test/test_helper/bats-support/.git
+./test/bats/.git
+test.bin
+test.out.bin

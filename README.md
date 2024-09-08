@@ -10,16 +10,6 @@ using the AMQP 1.0 protocol. It works with other AMQP 1.0 brokers, too, but the 
 correspond to Artemis. There are also some features specific to Artemis like ANYCAST/MULTICAST routing.
 Testing has been done with Artemis only.
 
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
-
-### Prerequisites
-
-- Go 1.23 or later (see [https://github.com/Azure/go-amqp](Azure/go-amqp))
-- An AMQP 1.0 compatible Message Broker, e.g. Azure Message Service or Apache
-  ActiveMQ Artemis
-
 ## Usage
 
 You can send a message with the following command:
@@ -115,6 +105,7 @@ Then you can start the tests:
 ## Contributing
 
 Contributions are welcome. Please open an issue or submit a pull request.
+Use the latest version of Go and run tests with Artemis.
 
 ## License
 
