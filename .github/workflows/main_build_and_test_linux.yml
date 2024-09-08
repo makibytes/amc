@@ -9,7 +9,7 @@ on:
 
 jobs:
   linux-amd64:
-    name: build and test linux/amd64
+    name: Build and test linux/amd64
     runs-on: ubuntu-latest
     services:
       artemis:
