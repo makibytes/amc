@@ -1,100 +1,35 @@
 name: build and release main
 
 on:
-  push:
-    tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+  release:
+    types: [created]
+
+permissions:
+    contents: write
+    packages: write
 
 jobs:
-  linux-amd64:
-    name: Build and release linux/amd64
+  build-and-release-all:
+    name: Build and release
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, windows, darwin]
+        goarch: [amd64, arm64]
+        exclude:
+        - goarch: arm64
+          goos: windows
     steps:
-    - name: Check branch==main
-      if: endsWith(github.ref, 'main') == false
-      run: exit 0
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: 1.23.1
-    - name: Check out code
-      uses: actions/checkout@v4
-    - name: Get dependencies
-      run: go mod download
-    - name: Build
-      run: go build -v -ldflags="-X 'github.com/makibytes/amc/cmd.version=${{ github.ref_name }}'" .
-    - name: Release
-      uses: wangyoucao577/go-release-action@v1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        goos: linux
-        goarch: amd64
-
-  macos-amd64:
-    name: Build and release macos/amd64
-    runs-on: macos-13
-    steps:
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: 1.23.1
     - name: Check out code
       uses: actions/checkout@v4
       with:
         submodules: recursive
-    - name: Get dependencies
-      run: go mod download
-    - name: Build
-      run: go build -v -ldflags="-X 'github.com/makibytes/amc/cmd.version=${{ github.ref_name }}'" .
     - name: Release
       uses: wangyoucao577/go-release-action@v1
       with:
+        build_command: go build -v -tags="${{ matrix.goos }}" -ldflags="-X 'github.com/makibytes/amc/cmd.version=${{ github.ref_name }}'" .
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        goos: darwin
-        goarch: amd64
-
-  macos-arm64:
-    name: Build and release macos/arm64
-    runs-on: macos-latest
-    steps:
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: 1.23.1
-    - name: Check out code
-      uses: actions/checkout@v4
-      with:
-        submodules: recursive
-    - name: Get dependencies
-      run: go mod download
-    - name: Build
-      run: go build -v -ldflags="-X 'github.com/makibytes/amc/cmd.version=${{ github.ref_name }}'" .
-    - name: Release
-      uses: wangyoucao577/go-release-action@v1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        goos: darwin
-        goarch: arm64
-
-  windows-amd64:
-    name: Build and release windows/amd64
-    runs-on: windows-latest
-    steps:
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: 1.23.1
-    - name: Check out code
-      uses: actions/checkout@v4
-      with:
-        submodules: recursive
-    - name: Get dependencies
-      run: go mod download
-    - name: Build
-      run: go build -v -ldflags="-X 'github.com/makibytes/amc/cmd.version=${{ github.ref_name }}'" .
-    - name: Release
-      uses: wangyoucao577/go-release-action@v1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        goos: windows
-        goarch: amd64
+        goos: ${{ matrix.goos }}
+        goarch: ${{ matrix.goarch }}
+        goversion: "https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz"
+        binary_name: "amc"
