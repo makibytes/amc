@@ -3,36 +3,15 @@ package log
 import (
 	"fmt"
 	"os"
-	"syscall"
 )
 
 // initialized in cmd/root
 var IsVerbose bool
 
-// initialized here
-var IsStdout bool = true
-
 func init() {
 	if isStdoutRedirected() {
 		IsStdout = false
 	}
-}
-
-func isStdoutRedirected() bool {
-	fileInfo, _ := os.Stdout.Stat()
-	// linux
-	if (fileInfo.Mode() & os.ModeCharDevice) == 0 {
-		return true
-	}
-
-	// windows or macos(?)
-	stat, ok := fileInfo.Sys().(*syscall.Stat_t)
-	if !ok {
-		return false
-	}
-
-	// macos
-	return stat.Rdev == 0
 }
 
 func Info(s string, args ...interface{}) {

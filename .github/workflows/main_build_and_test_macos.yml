@@ -9,7 +9,7 @@ on:
 
 jobs:
   macos-amd64:
-    name: build and test macos/amd64
+    name: Build macos/amd64
     runs-on: macos-13
     steps:
     - name: Set up Go
@@ -28,7 +28,7 @@ jobs:
       run: go test -short ./...
 
   macos-arm64:
-    name: build and test macos/arm64
+    name: Build macos/arm64
     runs-on: macos-latest
     steps:
     - name: Set up Go

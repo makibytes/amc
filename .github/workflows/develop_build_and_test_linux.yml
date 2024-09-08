@@ -6,8 +6,8 @@ on:
       - develop
 
 jobs:
-  build:
-    name: Build
+  linux-amd64:
+    name: Build and test linux/amd64
     runs-on: ubuntu-latest
     services:
       artemis:
@@ -31,3 +31,41 @@ jobs:
       run: go test -short ./...
     - name: Run integration tests
       run: ./run-tests.sh
+
+  macos-amd64:
+    name: Build macos/amd64
+    runs-on: macos-13
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: 1.23.1
+    - name: Check out code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - name: Get dependencies
+      run: go mod download
+    - name: Build
+      run: go build -v -ldflags="-X 'github.com/makibytes/amc/cmd.version=${{ github.ref_name }}'" .
+    - name: Run tests
+      run: go test -short ./...
+
+  windows-amd64:
+    name: Build windows/amd64
+    runs-on: windows-latest
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: 1.23.1
+    - name: Check out code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - name: Get dependencies
+      run: go mod download
+    - name: Build
+      run: go build -v -ldflags="-X 'github.com/makibytes/amc/cmd.version=${{ github.ref_name }}'" .
+    - name: Run unit tests
+      run: go test -short ./...

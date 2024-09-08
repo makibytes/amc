@@ -9,7 +9,7 @@ on:
 
 jobs:
   windows-amd64:
-    name: build and test windows/amd64
+    name: Build windows/amd64
     runs-on: windows-latest
     steps:
     - name: Set up Go
