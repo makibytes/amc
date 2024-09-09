@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/makibytes/amc.svg?branch=master)](https://travis-ci.org/makibytes/amc)
 [![Go Report Card](https://goreportcard.com/badge/github.com/makibytes/amc)](https://goreportcard.com/report/github.com/makibytes/amc)
 [![GoDoc](https://godoc.org/github.com/makibytes/amc?status.svg)](https://godoc.org/github.com/makibytes/amc)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/makibytes/amc/blob/main/LICENSE)
 
 This project provides a command-line interface (CLI) for sending and receiving messages to/from Apache Artemis,
 using the AMQP 1.0 protocol. It works with other AMQP 1.0 brokers, too, but the names in the arguments & flags
@@ -82,7 +82,7 @@ adds a newline character at the end of the message data for better readability.
 
 ## Testing
 
-The tests are based on the [https://https://github.com/bats-core/bats-core](bats testing framework)
+The tests are based on the [bats testing framework](https://github.com/bats-core/bats-core)
 (included) and depend on a local Artemis broker with its default settings.
 
 If you have Docker you can spin up an Artemis container like so:
