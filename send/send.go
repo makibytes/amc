@@ -27,12 +27,15 @@ func SendMessage(ctx context.Context, session *amqp.Session, args conn.SendArgum
 
 	// AMQP 1.0 doesn't know about ANYCAST/MULTICAST, it's an Artemis-specific feature
 	var artemisRouting uint8
+	var targetCapabilities []string
 	if args.Multicast {
 		log.Verbose("🤟 with MULTICAST routing")
 		artemisRouting = artemis.TopicType
+		targetCapabilities = append(targetCapabilities, "topic")
 	} else {
 		log.Verbose("👉 with ANYCAST routing")
 		artemisRouting = artemis.QueueType
+		targetCapabilities = append(targetCapabilities, "queue")
 	}
 	message.DeliveryAnnotations = amqp.Annotations{
 		"x-opt-jms-dest": artemisRouting,
@@ -54,9 +57,10 @@ func SendMessage(ctx context.Context, session *amqp.Session, args conn.SendArgum
 	senderOptions := &amqp.SenderOptions{
 		Durability: durability,
 		//		DynamicAddress:   true,
-		SourceAddress:    args.Address,
-		TargetDurability: durability,
-		Name:             "amc",
+		SourceAddress:      args.Address,
+		TargetCapabilities: targetCapabilities,
+		TargetDurability:   durability,
+		Name:               "amc",
 	}
 
 	log.Verbose("📤 generating sender...")
