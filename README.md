@@ -46,7 +46,7 @@ The following parameters and environment variables can be used for all commands:
 You can set properties (metadata) for the message with the following flags:
 
 ```sh
-amc put <queue-name> -P <key>=<value> <message>
+amc put <queue-name> -P <key1>=<value1> -P <key2>=<value2> <message>
 ```
 
 If a message has properties, the `get` command will show them automatically.
